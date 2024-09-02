@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema(
     ],
     bookmarks: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Object,
         ref: "Post",
       },
     ],
