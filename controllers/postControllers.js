@@ -126,10 +126,8 @@ export const getUserPosts = TryCatch(async (req, res) => {
 
 export const likeordislike = TryCatch(async (req, res) => {
   const postId = req.query.postId;
-  console.log(postId);
 
   const post = await Post.findById(postId);
-  console.log(post);
 
   if (!post) {
     return res.status(400).json({
@@ -139,7 +137,6 @@ export const likeordislike = TryCatch(async (req, res) => {
   }
 
   const likedByUser = req.id;
-  console.log(likedByUser);
 
   if (!post.likes.includes(likedByUser)) {
     post.likes.push(likedByUser);
@@ -234,7 +231,6 @@ export const addOrRemoveBookmark = TryCatch(async (req, res) => {
 
   const userId = req.id;
   const user = await User.findById(userId);
-  console.log(postId);
 
   if (!user.bookmarks.includes(postId)) {
     user.bookmarks.push(postId);

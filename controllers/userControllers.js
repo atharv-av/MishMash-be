@@ -149,7 +149,6 @@ export const getUserProfile = TryCatch(async (req, res) => {
   const id = req.params.id;
 
   const user = await User.findById(id);
-  console.log(user);
 
   if (!user) {
     return res.status(400).json({
@@ -166,7 +165,6 @@ export const getUserProfile = TryCatch(async (req, res) => {
 
 export const editUserProfile = TryCatch(async (req, res) => {
   let file = req.file;
-  console.log(file);
 
   let user = await User.findById(req.id);
 
