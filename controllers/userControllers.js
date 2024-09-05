@@ -7,7 +7,7 @@ import getDataUrl from "../utils/urlGenerator.js";
 import { v2 as cloudinary } from "cloudinary";
 
 export const registerUser = TryCatch(async (req, res) => {
-  const { fullname, username, email, phone, password } = req.body;
+  const { fullname, username, emailOrPhone, password } = req.body;
 
   if (!fullname || !username || !password) {
     return res.status(400).json({
@@ -16,11 +16,21 @@ export const registerUser = TryCatch(async (req, res) => {
     });
   }
 
-  if (!email && !phone) {
+  if (!emailOrPhone) {
     return res.status(400).json({
       success: false,
       message: "Please provide either an email or a phone number",
     });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let email = undefined;
+  let phone = undefined;
+
+  if (emailRegex.test(emailOrPhone)) {
+    email = emailOrPhone;
+  } else {
+    phone = emailOrPhone;
   }
 
   try {
@@ -103,20 +113,26 @@ export const registerUser = TryCatch(async (req, res) => {
 });
 
 export const loginUser = TryCatch(async (req, res) => {
-  const { username, email, phone, password } = req.body;
+  const { username, emailOrPhone, password } = req.body;
 
-  if ((!username && !email && !phone) || !password) {
+  if ((!username && !emailOrPhone) || !password) {
     return res.status(400).json({
       success: false,
       message: "Please enter all required details",
     });
   }
 
-  // Construct the query based on the provided credentials
   const query = {};
-  if (username) query.username = username;
-  if (email) query.email = email;
-  if (phone) query.phone = phone;
+  if (username) {
+    query.username = username;
+  } else if (emailOrPhone) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(emailOrPhone)) {
+      query.email = emailOrPhone;
+    } else {
+      query.phone = emailOrPhone;
+    }
+  }
 
   let user = await User.findOne(query);
   if (!user) {
@@ -140,7 +156,13 @@ export const loginUser = TryCatch(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Logged in successfully",
-    user,
+    user: {
+      _id: user._id,
+      fullname: user.fullname,
+      username: user.username,
+      email: user.email,
+      phone: user.phone,
+    },
     token,
   });
 });

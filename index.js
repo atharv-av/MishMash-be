@@ -11,18 +11,18 @@ const app = express();
 
 dotenv.config();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/api/v1", userRoutes);
-app.use("/api/v1", postRoutes);
-app.use("/api/v1", messageRoutes);
-
 app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
   })
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/v1", userRoutes);
+app.use("/api/v1", postRoutes);
+app.use("/api/v1", messageRoutes);
 
 const port = process.env.PORT;
 
