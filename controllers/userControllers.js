@@ -113,9 +113,9 @@ export const registerUser = TryCatch(async (req, res) => {
 });
 
 export const loginUser = TryCatch(async (req, res) => {
-  const { username, emailOrPhone, password } = req.body;
+  const { identifier, password } = req.body;
 
-  if ((!username && !emailOrPhone) || !password) {
+  if (!identifier || !password) {
     return res.status(400).json({
       success: false,
       message: "Please enter all required details",
@@ -123,15 +123,15 @@ export const loginUser = TryCatch(async (req, res) => {
   }
 
   const query = {};
-  if (username) {
-    query.username = username;
-  } else if (emailOrPhone) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(emailOrPhone)) {
-      query.email = emailOrPhone;
-    } else {
-      query.phone = emailOrPhone;
-    }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\d{10}$/; // Assuming a 10-digit phone number format
+
+  if (emailRegex.test(identifier)) {
+    query.email = identifier;
+  } else if (phoneRegex.test(identifier)) {
+    query.phone = identifier;
+  } else {
+    query.username = identifier;
   }
 
   let user = await User.findOne(query);
