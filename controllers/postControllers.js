@@ -107,11 +107,11 @@ export const getAllPosts = TryCatch(async (req, res) => {
 });
 
 export const getUserPosts = TryCatch(async (req, res) => {
-  const username = req.query.username;
+  const author = req.query.author;
 
-  const user = await User.findOne({ username });
+  const posts = await Post.find({ author });
 
-  if (!user) {
+  if (!posts) {
     return res.status(400).json({
       success: false,
       message: "User not found",
@@ -120,7 +120,7 @@ export const getUserPosts = TryCatch(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    posts: user.posts,
+    posts: posts,
   });
 });
 
