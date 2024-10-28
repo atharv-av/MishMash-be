@@ -6,6 +6,7 @@ import {
   deleteComment,
   getAllPosts,
   getCommentsOfPost,
+  getPostById,
   getUserPosts,
   likeordislike,
 } from "../controllers/postControllers.js";
@@ -22,6 +23,7 @@ router.post(
 );
 router.get("/post/all", isUserAuthenticated, getAllPosts);
 router.get("/post/userposts", isUserAuthenticated, getUserPosts);
+router.get("/post", isUserAuthenticated, getPostById);
 router.get("/post/likeordislike", isUserAuthenticated, likeordislike);
 router.post("/post/addcomment", isUserAuthenticated, addComment);
 router.get("/post/:id/comments", isUserAuthenticated, getCommentsOfPost);

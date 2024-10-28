@@ -124,6 +124,24 @@ export const getUserPosts = TryCatch(async (req, res) => {
   });
 });
 
+export const getPostById = TryCatch(async (req, res) => {
+  const postId = req.query.id;
+
+  const post = await Post.findOne({ postId });
+
+  if (!post) {
+    return res.status(400).json({
+      success: false,
+      message: "Post not found",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    post: post,
+  });
+});
+
 export const likeordislike = TryCatch(async (req, res) => {
   const postId = req.query.postId;
 
