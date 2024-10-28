@@ -125,9 +125,9 @@ export const getUserPosts = TryCatch(async (req, res) => {
 });
 
 export const getPostById = TryCatch(async (req, res) => {
-  const postId = req.query.id;
+  const postId = req.query.postId;
 
-  const post = await Post.findOne({ postId });
+  const post = await Post.findById(postId);
 
   if (!post) {
     return res.status(400).json({

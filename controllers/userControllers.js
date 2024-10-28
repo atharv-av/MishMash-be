@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import getDataUrl from "../utils/urlGenerator.js";
 
 import { v2 as cloudinary } from "cloudinary";
+import sendEmail from "../utils/emailSender.js";
 
 export const registerUser = TryCatch(async (req, res) => {
   const { fullname, username, emailOrPhone, password } = req.body;
@@ -253,9 +254,22 @@ export const followOrUnfollow = TryCatch(async (req, res) => {
     });
   }
 
+  let followAction = "";
   if (!followGiver.following.includes(followRecieverId)) {
     followGiver.following.push(followRecieverId);
     followReciever.followers.push(followGiverId);
+    followAction = "followed";
+
+    // Send email notification to follow receiver
+    if (followReciever.email) {
+      await sendEmail({
+        email: followReciever.email,
+        subject: "You have a new follower",
+        message: `${followGiver.username} has followed you on MishMash`
+      });
+      console.log(`mail send to ${followReciever.email}`);
+      
+    }
   } else {
     followGiver.following = followGiver.following.filter(
       (item) => item.toString() !== followRecieverId
@@ -263,6 +277,7 @@ export const followOrUnfollow = TryCatch(async (req, res) => {
     followReciever.followers = followReciever.followers.filter(
       (item) => item.toString() !== followGiverId
     );
+    followAction = "unfollowed";
   }
 
   await followGiver.save();
@@ -270,6 +285,7 @@ export const followOrUnfollow = TryCatch(async (req, res) => {
 
   res.status(200).json({
     success: true,
+    message: `You have ${followAction} ${followReciever.username}`,
     followingOfGiver: followGiver.following,
     followersOfReciever: followReciever.followers,
   });
