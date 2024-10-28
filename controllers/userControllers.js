@@ -266,9 +266,7 @@ export const followOrUnfollow = TryCatch(async (req, res) => {
         email: followReciever.email,
         subject: "You have a new follower",
         message: `${followGiver.username} has followed you on MishMash`
-      });
-      console.log(`mail send to ${followReciever.email}`);
-      
+      });      
     }
   } else {
     followGiver.following = followGiver.following.filter(
